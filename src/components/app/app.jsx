@@ -19,6 +19,7 @@ class App extends Component {
       };
     });
   };
+
   render() {
     const showPlanet = this.state.showRandomPlanet;
     const buttonTitle = showPlanet
