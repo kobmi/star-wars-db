@@ -8,45 +8,50 @@ import PersonDetails from "../person-details";
 import "./app.css";
 
 class App extends Component {
-  state = {
-    showRandomPlanet: true,
-  };
+    state = {
+        showRandomPlanet: true,
+        selectedItem: null,
+    };
 
-  toogleShowRandomPlanet = () => {
-    this.setState((prevState) => {
-      return {
-        showRandomPlanet: !prevState.showRandomPlanet,
-      };
-    });
-  };
+    toogleShowRandomPlanet = () => {
+        this.setState((prevState) => {
+            return {
+                showRandomPlanet: !prevState.showRandomPlanet,
+            };
+        });
+    };
 
-  render() {
-    const showPlanet = this.state.showRandomPlanet;
-    const buttonTitle = showPlanet
-      ? "Hide Random planet"
-      : "Show Random Planet";
-    const planet = this.state.showRandomPlanet ? <RandomPlanet /> : null;
-    return (
-      <div className="app">
-        <Header />
-        {planet}
-        <button
-          className="toggle-planet btn btn-warning btn-lg"
-          onClick={this.toogleShowRandomPlanet}
-        >
-          {buttonTitle}
-        </button>
-        <div className="row mb2">
-          <div className="col-md-6">
-            <ItemList />
-          </div>
-          <div className="col-md-6">
-            <PersonDetails />
-          </div>
-        </div>
-      </div>
-    );
-  }
+    onItemSelected = (id) => {
+        this.setState({ selectedItem: id });
+    };
+
+    render() {
+        const { showPlanet, selectedItem } = this.state;
+        const buttonTitle = showPlanet
+            ? "Hide Random planet"
+            : "Show Random Planet";
+        const planet = this.state.showRandomPlanet ? <RandomPlanet /> : null;
+        return (
+            <div className="app">
+                <Header />
+                {planet}
+                <button
+                    className="toggle-planet btn btn-warning btn-lg"
+                    onClick={this.toogleShowRandomPlanet}
+                >
+                    {buttonTitle}
+                </button>
+                <div className="row mb2">
+                    <div className="col-md-6">
+                        <ItemList onItemSelected={this.onItemSelected} />
+                    </div>
+                    <div className="col-md-6">
+                        <PersonDetails itemId={selectedItem} />
+                    </div>
+                </div>
+            </div>
+        );
+    }
 }
 
 export default App;
