@@ -4,36 +4,43 @@ import ItemList from "../item-list";
 import PersonDetails from "../person-details";
 import ErrorIndicator from "../error-indicator";
 import "./people-page.css";
+import SwapiService from "../../services/swapi-service";
 
 export default class PeoplePage extends Component {
-  state = {
-    selectedPerson: null,
-    hasError: false,
-  };
+    swapi = new SwapiService();
+    state = {
+        selectedPerson: null,
+        hasError: false,
+    };
 
-  componentDidCatch() {
-    debugger;
-    this.setState({ hasError: true });
-  }
-  onPersonSelected = (id) => {
-    this.setState({ selectedPerson: id });
-  };
-  render() {
-    const { selectedPerson } = this.state;
-    if (this.state.hasError) {
-      return <ErrorIndicator />;
+    componentDidCatch() {
+        debugger;
+        this.setState({ hasError: true });
     }
-    return (
-      <div>
-        <div className="row mb2">
-          <div className="col-md-6">
-            <ItemList onItemSelected={this.onPersonSelected} />
-          </div>
-          <div className="col-md-6">
-            <PersonDetails itemId={selectedPerson} />
-          </div>
-        </div>
-      </div>
-    );
-  }
+    onPersonSelected = (id) => {
+        this.setState({ selectedPerson: id });
+    };
+    render() {
+        if (this.state.hasError) {
+            return <ErrorIndicator />;
+        }
+        return (
+            <div>
+                <div className="row mb2">
+                    <div className="col-md-6">
+                        <ItemList
+                            onItemSelected={this.onPersonSelected}
+                            getData={this.swapi.getAllPeople}
+                            renderItem={(item) =>
+                                `${item.name} (${item.gender} ${item.birthYear})`
+                            }
+                        />
+                    </div>
+                    <div className="col-md-6">
+                        <PersonDetails itemId={this.state.selectedPerson} />
+                    </div>
+                </div>
+            </div>
+        );
+    }
 }
