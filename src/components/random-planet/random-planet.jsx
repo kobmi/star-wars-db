@@ -9,7 +9,7 @@ import "./random-planet.css";
 export default class RandomPlanet extends Component {
     swapi = new SwapiService();
     state = {
-        planet: {},
+        planet: null,
         loading: true,
         error: false,
     };

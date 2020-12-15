@@ -2,56 +2,76 @@ import React, { Component } from "react";
 
 import Header from "../header";
 import RandomPlanet from "../random-planet";
-import PeoplePage from "../people-page";
-
-import ErrorButton from "../error-button";
 import ErrorBoundry from "../error-boundry";
+import ErrorButton from "../error-button";
 
+import ItemDetails, { Record } from "../item-details";
 import SwapiService from "../../services/swapi-service";
+
+import {
+    PersonList,
+    PlanetList,
+    StarshipList,
+    PersonDetails,
+    PlanetDetails,
+    StarshipDetails,
+} from "../sw-components";
 
 import "./app.css";
 
 class App extends Component {
-  swapi = new SwapiService();
-  state = {
-    showRandomPlanet: true,
-  };
+    swapi = new SwapiService();
+    state = {
+        showRandomPlanet: true,
+    };
 
-  toogleShowRandomPlanet = () => {
-    this.setState((prevState) => {
-      return {
-        showRandomPlanet: !prevState.showRandomPlanet,
-      };
-    });
-  };
+    toogleShowRandomPlanet = () => {
+        this.setState((prevState) => {
+            return {
+                showRandomPlanet: !prevState.showRandomPlanet,
+            };
+        });
+    };
 
-  render() {
-    const { showPlanet } = this.state;
-    const buttonTitle = showPlanet
-      ? "Hide Random planet"
-      : "Show Random Planet";
-    const planet = this.state.showRandomPlanet ? <RandomPlanet /> : null;
-    return (
-      <ErrorBoundry>
-        <div className="container">
-          <div className="stardb-app">
-            <Header />
-            {planet}
-            <div className="row mb2 button-row">
-              <button
+    render() {
+        const { showPlanet } = this.state;
+        const toggleShowPlanetButton = (
+            <button
                 className="toggle-planet btn btn-warning btn-lg"
                 onClick={this.toogleShowRandomPlanet}
-              >
-                {buttonTitle}
-              </button>
-              <ErrorButton />
-            </div>
-            <PeoplePage />
-          </div>
-        </div>
-      </ErrorBoundry>
-    );
-  }
+            >
+                {showPlanet ? "Hide Random planet" : "Show Random Planet"}
+            </button>
+        );
+        const randomPlanet = this.state.showRandomPlanet ? (
+            <RandomPlanet />
+        ) : null;
+        return (
+            <ErrorBoundry>
+                <div className="container">
+                    <div className="stardb-app">
+                        <Header />
+                        {randomPlanet}
+                        <div className="row mb2 button-row">
+                            {toggleShowPlanetButton}
+                            <ErrorButton />
+                        </div>
+                        <PersonList />
+                        <PlanetList />
+                        <StarshipList />
+
+                        <PlanetDetails itemId={10} />
+                        <StarshipDetails itemId={10} />
+                        <PersonDetails itemId={10} />
+                        {/* <RowBlock
+                            left={personDetails}
+                            right={starShipDetails}
+                        /> */}
+                    </div>
+                </div>
+            </ErrorBoundry>
+        );
+    }
 }
 
 export default App;
