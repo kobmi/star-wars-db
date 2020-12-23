@@ -3,75 +3,78 @@ import React, { Component } from "react";
 import Header from "../header";
 import RandomPlanet from "../random-planet";
 import ErrorBoundry from "../error-boundry";
-import ErrorButton from "../error-button";
-
-import ItemDetails, { Record } from "../item-details";
 import SwapiService from "../../services/swapi-service";
+import DummySwapiService from "../../services/dummy-swapi-service";
 
-import {
-    PersonList,
-    PlanetList,
-    StarshipList,
-    PersonDetails,
-    PlanetDetails,
-    StarshipDetails,
-} from "../sw-components";
+import { PeoplePage, PlanetsPage, StarshipsPage } from "../pages";
+import { SwapiServiceProvider } from "../swapi-service-context";
 
 import "./app.css";
 
-class App extends Component {
-    swapi = new SwapiService();
+import { BrowserRouter as Router, Route } from "react-router-dom";
+import { StarshipDetails } from "../sw-components";
+
+export default class App extends Component {
     state = {
-        showRandomPlanet: true,
+        swapiService: new SwapiService(),
+        // showRandomPlanet: true,
     };
 
-    toogleShowRandomPlanet = () => {
-        this.setState((prevState) => {
+    onServiceChange = () => {
+        this.setState(({ swapiService }) => {
+            const Service =
+                swapiService instanceof SwapiService
+                    ? DummySwapiService
+                    : SwapiService;
             return {
-                showRandomPlanet: !prevState.showRandomPlanet,
+                swapiService: new Service(),
             };
         });
     };
 
     render() {
-        const { showPlanet } = this.state;
-        const toggleShowPlanetButton = (
-            <button
-                className="toggle-planet btn btn-warning btn-lg"
-                onClick={this.toogleShowRandomPlanet}
-            >
-                {showPlanet ? "Hide Random planet" : "Show Random Planet"}
-            </button>
-        );
-        const randomPlanet = this.state.showRandomPlanet ? (
-            <RandomPlanet />
-        ) : null;
         return (
             <ErrorBoundry>
-                <div className="container">
-                    <div className="stardb-app">
-                        <Header />
-                        {randomPlanet}
-                        <div className="row mb2 button-row">
-                            {toggleShowPlanetButton}
-                            <ErrorButton />
-                        </div>
-                        <PersonList />
-                        <PlanetList />
-                        <StarshipList />
+                <SwapiServiceProvider value={this.state.swapiService}>
+                    <Router>
+                        <div className="container">
+                            <div className="stardb-app">
+                                <Header
+                                    onServiceChange={this.onServiceChange}
+                                />
+                                <RandomPlanet />
+                                <Route
+                                    path="/"
+                                    exact
+                                    render={() => <h2>Welcome to StarDB</h2>}
+                                />
+                                <Route
+                                    path="/people/:id?"
+                                    component={PeoplePage}
+                                />
+                                <Route
+                                    path="/planets/"
+                                    component={PlanetsPage}
+                                    exact
+                                />
+                                <Route
+                                    path="/starships"
+                                    exact
+                                    component={StarshipsPage}
+                                />
+                                <Route
+                                    path="/starships/:id"
+                                    render={({ match, history, location }) => {
+                                        const { id } = match.params;
 
-                        <PlanetDetails itemId={10} />
-                        <StarshipDetails itemId={10} />
-                        <PersonDetails itemId={10} />
-                        {/* <RowBlock
-                            left={personDetails}
-                            right={starShipDetails}
-                        /> */}
-                    </div>
-                </div>
+                                        return <StarshipDetails itemId={id} />;
+                                    }}
+                                />
+                            </div>
+                        </div>
+                    </Router>
+                </SwapiServiceProvider>
             </ErrorBoundry>
         );
     }
 }
-
-export default App;

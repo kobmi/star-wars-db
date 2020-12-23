@@ -1,6 +1,7 @@
 import React from "react";
+import PropTypes from "prop-types";
 
-const RowBlock = ({ right, left }) => {
+const Row = ({ left, right }) => {
     return (
         <div className="row mb2">
             <div className="col-md-6">{left}</div>
@@ -9,4 +10,9 @@ const RowBlock = ({ right, left }) => {
     );
 };
 
-export default RowBlock;
+Row.propTypes = {
+    left: PropTypes.node,
+    right: PropTypes.node,
+};
+
+export default Row;
